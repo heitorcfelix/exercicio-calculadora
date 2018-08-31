@@ -2,12 +2,53 @@ package br.ufpe.cin.if710.calculadora
 
 import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
+
+    private var key_text_info = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //recebe valor do savedInstance
+        text_info.text = savedInstanceState?.getString(key_text_info)
+
+        //adicionando um clicklistener para cada botao
+        //cada botao da um append no text_calc de acordo com o texto de cada botao
+        //botao clear limpa o text_calc
+        btn_0.setOnClickListener { text_calc.append(btn_0.text) }
+        btn_1.setOnClickListener { text_calc.append(btn_1.text) }
+        btn_2.setOnClickListener { text_calc.append(btn_2.text) }
+        btn_3.setOnClickListener { text_calc.append(btn_3.text) }
+        btn_4.setOnClickListener { text_calc.append(btn_4.text) }
+        btn_5.setOnClickListener { text_calc.append(btn_5.text) }
+        btn_6.setOnClickListener { text_calc.append(btn_6.text) }
+        btn_7.setOnClickListener { text_calc.append(btn_7.text) }
+        btn_8.setOnClickListener { text_calc.append(btn_8.text) }
+        btn_9.setOnClickListener { text_calc.append(btn_9.text) }
+        btn_Dot.setOnClickListener { text_calc.append(btn_Dot.text) }
+        btn_LParen.setOnClickListener { text_calc.append(btn_LParen.text) }
+        btn_RParen.setOnClickListener { text_calc.append(btn_RParen.text) }
+        btn_Power.setOnClickListener { text_calc.append(btn_Power.text) }
+        btn_Divide.setOnClickListener { text_calc.append(btn_Divide.text) }
+        btn_Multiply.setOnClickListener { text_calc.append(btn_Multiply.text) }
+        btn_Subtract.setOnClickListener { text_calc.append(btn_Subtract.text) }
+        btn_Add.setOnClickListener { text_calc.append(btn_Add.text) }
+        btn_Clear.setOnClickListener {
+            text_calc.setText("")
+            text_info.text = ""
+        }
+        //botao equal chama funcao eval e coloca resultado no text_info
+        btn_Equal.setOnClickListener {
+            val result = eval(text_calc.text.toString()).toString()
+            if(result != Double.NaN.toString()) {
+                text_info.text = result
+            }
+        }
+
     }
 
     //Como usar a função:
@@ -36,7 +77,7 @@ class MainActivity : Activity() {
             fun parse(): Double {
                 nextChar()
                 val x = parseExpression()
-                if (pos < str.length) throw RuntimeException("Caractere inesperado: " + ch)
+                if (pos < str.length) toast("Caractere inesperado") //throw RuntimeException("Caractere inesperado: " + ch)
                 return x
             }
 
@@ -93,13 +134,27 @@ class MainActivity : Activity() {
                     else if (func == "tan")
                         x = Math.tan(Math.toRadians(x))
                     else
-                        throw RuntimeException("Função desconhecida: " + func)
+                        toast("Funçao desconhecida")
+                        //throw RuntimeException("Função desconhecida: " + func)
                 } else {
-                    throw RuntimeException("Caractere inesperado: " + ch.toChar())
+                    toast("Caractere inesperado")
+                    x = Double.NaN
+                    //throw RuntimeException("Caractere inesperado: " + ch.toChar())
                 }
                 if (eat('^')) x = Math.pow(x, parseFactor()) // potência
                 return x
             }
         }.parse()
     }
+
+    fun Any.toast(msg:String) {
+        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putString(key_text_info,text_info.text.toString())
+        super.onSaveInstanceState(outState)
+    }
+
 }
+
