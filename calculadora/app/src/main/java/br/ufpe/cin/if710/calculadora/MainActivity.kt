@@ -41,11 +41,14 @@ class MainActivity : Activity() {
             text_calc.setText("")
             text_info.text = ""
         }
-        //botao equal chama funcao eval e coloca resultado no text_info
+        //botao equal chama funcao eval e coloca resultado no text_info e se nao for um numero mostra o toast
         btn_Equal.setOnClickListener {
             val result = eval(text_calc.text.toString()).toString()
             if(result != Double.NaN.toString()) {
                 text_info.text = result
+            }
+            else {
+                toast("Funçao desconhecida")
             }
         }
 
@@ -77,7 +80,8 @@ class MainActivity : Activity() {
             fun parse(): Double {
                 nextChar()
                 val x = parseExpression()
-                if (pos < str.length) toast("Caractere inesperado") //throw RuntimeException("Caractere inesperado: " + ch)
+                //removendo runtimeException para a funçao sempre retornar x, erros de x sao tratados no OnCreate
+                //if (pos < str.length) throw RuntimeException("Caractere inesperado: " + ch)
                 return x
             }
 
@@ -133,11 +137,11 @@ class MainActivity : Activity() {
                         x = Math.cos(Math.toRadians(x))
                     else if (func == "tan")
                         x = Math.tan(Math.toRadians(x))
+                    //em casos de erro de expressao, retorna NotANumber
                     else
-                        toast("Funçao desconhecida")
+                        x = Double.NaN
                         //throw RuntimeException("Função desconhecida: " + func)
                 } else {
-                    toast("Caractere inesperado")
                     x = Double.NaN
                     //throw RuntimeException("Caractere inesperado: " + ch.toChar())
                 }
@@ -157,4 +161,3 @@ class MainActivity : Activity() {
     }
 
 }
-
